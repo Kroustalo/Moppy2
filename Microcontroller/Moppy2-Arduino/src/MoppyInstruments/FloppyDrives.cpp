@@ -2,6 +2,7 @@
  * FloppyDrives.cpp
  *
  * Output for controlling floppy drives.  The _original_ Moppy instrument!
+ * Edited by Dimitrios Sideris (Kroustalo/Jimaki)
  */
 #include "MoppyInstrument.h"
 #include "FloppyDrives.h"
@@ -43,26 +44,14 @@ unsigned int FloppyDrives::originalPeriod[] = {0,0,0,0,0,0,0,0,0,0};
 
 void FloppyDrives::setup() {
 
-  // Prepare pins (0 and 1 are reserved for Serial communications)
-  pinMode(2, OUTPUT); // Step control 1
-  pinMode(3, OUTPUT); // Direction 1
-  pinMode(4, OUTPUT); // Step control 2
-  pinMode(5, OUTPUT); // Direction 2
-  pinMode(6, OUTPUT); // Step control 3
-  pinMode(7, OUTPUT); // Direction 3
-  pinMode(8, OUTPUT); // Step control 4
-  pinMode(9, OUTPUT); // Direction 4
-  pinMode(10, OUTPUT); // Step control 5
-  pinMode(11, OUTPUT); // Direction 5
-  pinMode(12, OUTPUT); // Step control 6
-  pinMode(13, OUTPUT); // Direction 6
-  pinMode(14, OUTPUT); // Step control 7
-  pinMode(15, OUTPUT); // Direction 7
-  pinMode(16, OUTPUT); // Step control 8
-  pinMode(17, OUTPUT); // Direction 8
-  pinMode(18, OUTPUT); // Step control 9
-  pinMode(19, OUTPUT); // Direction 9
-
+  /* Prepare pins (0 and 1 are reserved for Serial communications)
+  * shortened pin allocation since we are using all pins of arduino (we could do it one by one...)
+  * Nine Drives Max pins 2-19
+  */
+  for(int i=2;i<19;i+=2){
+	pinMode(i, OUTPUT); // Step control #i-1
+	pinMode(i+1, OUTPUT); // Direction #i
+  } 
 
   // With all pins setup, let's do a first run reset
   resetAll();
@@ -80,18 +69,19 @@ void FloppyDrives::setup() {
   }
 }
 
-// Play startup sound to confirm drive functionality
+// Play startup sound to confirm drive functionality (Cool I can make new bootup)
 void FloppyDrives::startupSound(byte driveNum) {
   unsigned int chargeNotes[] = {
-      noteDoubleTicks[31],
-      noteDoubleTicks[36],
-      noteDoubleTicks[38],
-      noteDoubleTicks[43],
+      noteDoubleTicks[30],
+      noteDoubleTicks[35],
+      noteDoubleTicks[40],
+      noteDoubleTicks[45],
+	  noteDoubleTicks[50],
       0
   };
   byte i = 0;
   unsigned long lastRun = 0;
-  while(i < 5) {
+  while(i < 6) {
     if (millis() - 200 > lastRun) {
       lastRun = millis();
       currentPeriod[driveNum] = chargeNotes[i++];
